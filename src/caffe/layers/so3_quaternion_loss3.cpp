@@ -1,5 +1,4 @@
 #include "caffe/layers/so3_quaternion_loss3.hpp"
-#include "caffe/util/math_functions.hpp"
 
 namespace caffe {
 
@@ -13,7 +12,6 @@ void SO3QuaternionLoss3Layer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bott
     CHECK_EQ(bottom[0]->count(1), 4)<< "Quaternions have 4 parameters!.";
     CHECK_EQ(bottom[1]->count(1), 4)<< "Quaternions have 4 parameters!.";
     
-    count = bottom[0]->count();
     N = bottom[0]->shape(0);
     
 }

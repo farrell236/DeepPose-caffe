@@ -1,5 +1,4 @@
 #include "caffe/layers/so3_quaternion_loss3.hpp"
-#include "caffe/util/math_functions.hpp"
 
 namespace caffe {
 

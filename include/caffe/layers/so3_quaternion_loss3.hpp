@@ -40,9 +40,7 @@ protected:
                               const vector<bool>& propagate_down,
                               const vector<Blob<Dtype>*>& bottom);
         
-    Blob<Dtype> dot;
-    
-    int count;
+    Blob<Dtype> dot;    
     int N;
     
 };
