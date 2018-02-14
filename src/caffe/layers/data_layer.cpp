@@ -47,11 +47,32 @@ void DataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       << top[0]->channels() << "," << top[0]->height() << ","
       << top[0]->width();
   // label
+  if(datum.float_data_size() > 0){
+    this->output_labels_float_ = true;
+  } else {
+    this->output_labels_float_ = false;
+  }
+
   if (this->output_labels_) {
-    vector<int> label_shape(1, batch_size);
-    top[1]->Reshape(label_shape);
-    for (int i = 0; i < this->prefetch_.size(); ++i) {
-      this->prefetch_[i]->label_.Reshape(label_shape);
+    //vector<int> label_shape(1, batch_size);
+    //top[1]->Reshape(label_shape);
+    //for (int i = 0; i < this->prefetch_.size(); ++i) {
+    //  this->prefetch_[i]->label_.Reshape(label_shape);
+    //}
+    if(this->output_labels_float_)
+    {
+      top[1]->Reshape(this->layer_param_.data_param().batch_size(), datum.float_data_size(), 1, 1);
+      for (int i = 0; i < this->prefetch_.size(); ++i) {
+        this->prefetch_[i]->label_.Reshape(this->layer_param_.data_param().batch_size(),datum.float_data_size(), 1, 1);
+      }
+    }
+    else
+    {
+      vector<int> label_shape(1, batch_size);
+      top[1]->Reshape(label_shape);
+      for (int i = 0; i < this->prefetch_.size(); ++i) {
+        this->prefetch_[i]->label_.Reshape(label_shape);
+      }
     }
   }
 }
@@ -118,7 +139,14 @@ void DataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
     // Copy label.
     if (this->output_labels_) {
       Dtype* top_label = batch->label_.mutable_cpu_data();
-      top_label[item_id] = datum.label();
+      //top_label[item_id] = datum.label();
+      if(this->output_labels_float_) {
+        for(int i=0; i<datum.float_data_size(); ++i) {
+          top_label[item_id*datum.float_data_size()+i] = datum.float_data(i);
+        }
+      } else {
+        top_label[item_id] = datum.label();
+      }
     }
     trans_time += timer.MicroSeconds();
     Next();
