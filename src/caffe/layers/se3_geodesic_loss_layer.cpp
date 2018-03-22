@@ -13,11 +13,17 @@ void SE3GeodesicLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     w_alpha = this->layer_param_.se3_geodesic_loss_param().w_alpha();
     w_beta = this->layer_param_.se3_geodesic_loss_param().w_beta();
     bUseRegularisation = this->layer_param_.se3_geodesic_loss_param().use_regularisation();
+    
     /*
     std::cout << "w_alpha: " << w_alpha << std::endl;
     std::cout << "w_beta: " << w_beta << std::endl;
     std::cout << "bUseRegularisation: " << bUseRegularisation << std::endl;
     */
+    
+    caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
+    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha; }
+    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta; }
+    
     //std::cout << "---------- TESTING LayerSetUp() END ---------" << std::endl;
 
     
@@ -510,10 +516,6 @@ void SE3GeodesicLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom
                                               const vector<Blob<Dtype>*>& top) {
     
     //std::cout << "---------- TESTING FORWARD_CPU() ---------" << std::endl;
-    
-    caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
-    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha ; }
-    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta ; }
     /*
     std::cout << "bottom0 shape0: " << bottom[0]->shape(0) << std::endl;
     std::cout << "bottom0 shape1: " << bottom[0]->shape(1) << std::endl;
@@ -563,10 +565,6 @@ void SE3GeodesicLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
                                                const vector<Blob<Dtype>*>& bottom) {
 
     //std::cout << "---------- TESTING BACKWARD_CPU() ---------" << std::endl;
-    
-    caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
-    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha; }
-    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta; }
     
     const Dtype* top_diff = top[0]->cpu_diff();
     

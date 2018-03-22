@@ -7,11 +7,6 @@ void SE3GeodesicLossLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom
                                               const vector<Blob<Dtype>*>& top) {
 
     //std::cout << "---------- TESTING FORWARD_GPU() ---------" << std::endl;
-    
-    
-    caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
-    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha; }
-    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta; }
     /*
     std::cout << "bottom0 shape0: " << bottom[0]->shape(0) << std::endl;
     std::cout << "bottom0 shape1: " << bottom[0]->shape(1) << std::endl;
@@ -60,10 +55,6 @@ void SE3GeodesicLossLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
                                                const vector<Blob<Dtype>*>& bottom) {
     
     //std::cout << "---------- TESTING BACKWARD_GPU() ---------" << std::endl;
-    
-    caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
-    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha; }
-    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta; }
     
     const Dtype* top_diff = top[0]->cpu_diff();
     

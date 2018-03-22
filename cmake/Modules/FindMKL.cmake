@@ -46,7 +46,7 @@ else()
     endif()
   else()
     if(APPLE)
-      list(APPEND __mkl_libs intel_lp64)
+      list(APPEND __mkl_libs intel_lp64 lapack95_lp64 blas95_lp64)
     else()
       list(APPEND __mkl_libs intel_lp64 gf_lp64)
     endif()
@@ -58,7 +58,12 @@ else()
      list(APPEND __mkl_libs sequential)
   endif()
 
-  list(APPEND __mkl_libs core cdft_core)
+  if(APPLE)
+    list(APPEND __mkl_libs core)
+  else()
+    list(APPEND __mkl_libs core cdft_core)
+  endif()
+
 endif()
 
 
