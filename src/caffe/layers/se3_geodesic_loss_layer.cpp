@@ -20,8 +20,12 @@ void SE3GeodesicLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     bUseRegularisation = this->layer_param_.se3_geodesic_loss_param().use_regularisation();
     
     /*
-    std::cout << "w_alpha: " << w_alpha << std::endl;
-    std::cout << "w_beta: " << w_beta << std::endl;
+    std::cout << "w_r1: " << w_r1 << std::endl;
+    std::cout << "w_r2: " << w_r2 << std::endl;
+    std::cout << "w_r3: " << w_r3 << std::endl;
+    std::cout << "w_t1: " << w_t1 << std::endl;
+    std::cout << "w_t2: " << w_t2 << std::endl;
+    std::cout << "w_t3: " << w_t3 << std::endl;
     std::cout << "bUseRegularisation: " << bUseRegularisation << std::endl;
     */
     
