@@ -432,20 +432,44 @@ void SE3GeodesicLossLayer<Dtype>::left_log_from_identity(const Dtype* point,
     Dtype reg_point[6] = {0};
     this->regularize_transformation(point,reg_point);
     
-    double inv_inner_product[36] = {0};
-    std::copy(inner_product_mat_at_identity, inner_product_mat_at_identity+36, inv_inner_product);
+    double A[36] = {0};
+    std::copy(inner_product_mat_at_identity, inner_product_mat_at_identity+36, A);
     
+    // Calculate inverse of inner_product_mat_at_identity
     int ipiv[6] = {0};
-    LAPACKE_dgetrf(LAPACK_ROW_MAJOR, 6, 6, inv_inner_product, 6, ipiv);
-    LAPACKE_dgetri(LAPACK_ROW_MAJOR, 6, inv_inner_product, 6, ipiv);
+    LAPACKE_dgetrf(LAPACK_ROW_MAJOR, 6, 6, A, 6, ipiv);
+    LAPACKE_dgetri(LAPACK_ROW_MAJOR, 6, A, 6, ipiv);
     
-    Dtype inv_inner_product_[36] = {0};
-    std::copy(inv_inner_product, inv_inner_product+36, inv_inner_product_);
+    // Calculate square root of inverse of inner_product_mat_at_identity
+    int M;
+    int ISUPPZ[2*6] = {0};
+    double W[6] = {0};
+    double Z[6*6] = {0};
     
-    caffe_cpu_gemm(CblasNoTrans, CblasNoTrans, 6, 1, 6,
-                   (Dtype)1., inv_inner_product_, point,
+    LAPACKE_dsyevr(LAPACK_ROW_MAJOR, 'V', 'A', 'L', 6, A, 6, 0, 0, 0, 0,
+                   LAPACKE_dlamch('S'), &M, W, Z, 6, ISUPPZ);
+    
+    double B[6*6] = {0};
+    for (int j=0; j<6; ++j) {
+        double lambda=sqrt(W[j]);
+        for (int i=0; i<6; ++i) {
+            B[j*6+i] = Z[j*6+i] * lambda;
+        }
+    }
+    
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, 6, 6, 6,
+                1, B, 6, Z, 6, 0, A, 6);
+    
+    Dtype sqrt_inv_inner_prod_mat[36] = {0};
+    std::copy(A, A+36, sqrt_inv_inner_prod_mat);
+    
+    // Continue Computation
+    caffe_cpu_gemm(CblasNoTrans, CblasTrans, 1, 6, 6,
+                   (Dtype)1., reg_point, sqrt_inv_inner_prod_mat,
                    (Dtype)0., log);
 
+    // TODO: regularise log vector
+    
 }
     
     
@@ -606,8 +630,8 @@ void SE3GeodesicLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         
         //std::cout << "top_diff[0]: " << std::endl << top_diff[0] << std::endl;
         
-        caffe_scal(3, w_alpha, bottom_diff0);
-        caffe_scal(3, w_beta, bottom_diff0+3);
+        caffe_scal(3, sqrt(w_alpha), bottom_diff0);
+        caffe_scal(3, sqrt(w_beta), bottom_diff0+3);
         /*
         std::cout << "bottom_diff0: " << std::endl;
         for (int j=0; j<6; j++) {
