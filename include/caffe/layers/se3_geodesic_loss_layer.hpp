@@ -88,8 +88,13 @@ private:
     // Constants
     int N;
     
-    Dtype w_alpha;
-    Dtype w_beta;
+    Dtype w_r1;
+    Dtype w_r2;
+    Dtype w_r3;
+    Dtype w_t1;
+    Dtype w_t2;
+    Dtype w_t3;
+
     bool bUseRegularisation;
     
     Dtype inner_product_mat_at_identity[36];

@@ -1137,9 +1137,13 @@ message SE3GeodesicLossParameter {
   // Enable or Disable Rotation Regularisation Function
   optional bool use_regularisation = 1 [default = true];
 
-  // Gradient Weighting alpha (rotation), beta (translation)
-  optional float w_alpha = 2 [default = 1.]; 
-  optional float w_beta  = 3 [default = 1.];
+  // Gradient Weighting 
+  optional float w_r1 = 2 [default = 1.]; 
+  optional float w_r2 = 3 [default = 1.]; 
+  optional float w_r3 = 4 [default = 1.]; 
+  optional float w_t1 = 5 [default = 1.]; 
+  optional float w_t2 = 6 [default = 1.]; 
+  optional float w_t3 = 7 [default = 1.]; 
 
 }
 

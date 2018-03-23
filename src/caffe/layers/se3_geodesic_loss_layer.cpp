@@ -10,8 +10,13 @@ void SE3GeodesicLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     
     LossLayer<Dtype>::LayerSetUp(bottom, top);
     
-    w_alpha = this->layer_param_.se3_geodesic_loss_param().w_alpha();
-    w_beta = this->layer_param_.se3_geodesic_loss_param().w_beta();
+    w_r1 = this->layer_param_.se3_geodesic_loss_param().w_r1();
+    w_r2 = this->layer_param_.se3_geodesic_loss_param().w_r2();
+    w_r3 = this->layer_param_.se3_geodesic_loss_param().w_r3();
+    w_t1 = this->layer_param_.se3_geodesic_loss_param().w_t1();
+    w_t2 = this->layer_param_.se3_geodesic_loss_param().w_t2();
+    w_t3 = this->layer_param_.se3_geodesic_loss_param().w_t3();
+    
     bUseRegularisation = this->layer_param_.se3_geodesic_loss_param().use_regularisation();
     
     /*
@@ -21,8 +26,13 @@ void SE3GeodesicLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     */
     
     caffe_set(36, (Dtype)0., inner_product_mat_at_identity);
-    for (int i=0; i<3; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_alpha; }
-    for (int i=3; i<6; i++) { inner_product_mat_at_identity[i*6+i] = 1. / w_beta; }
+    
+    inner_product_mat_at_identity[ 0] = 1. / w_r1;
+    inner_product_mat_at_identity[ 7] = 1. / w_r2;
+    inner_product_mat_at_identity[14] = 1. / w_r3;
+    inner_product_mat_at_identity[21] = 1. / w_t1;
+    inner_product_mat_at_identity[28] = 1. / w_t2;
+    inner_product_mat_at_identity[35] = 1. / w_t3;
     
     //std::cout << "---------- TESTING LayerSetUp() END ---------" << std::endl;
 
@@ -630,8 +640,13 @@ void SE3GeodesicLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         
         //std::cout << "top_diff[0]: " << std::endl << top_diff[0] << std::endl;
         
-        caffe_scal(3, sqrt(w_alpha), bottom_diff0);
-        caffe_scal(3, sqrt(w_beta), bottom_diff0+3);
+        bottom_diff0[0] *= sqrt(w_r1);
+        bottom_diff0[1] *= sqrt(w_r2);
+        bottom_diff0[2] *= sqrt(w_r3);
+        bottom_diff0[3] *= sqrt(w_t1);
+        bottom_diff0[4] *= sqrt(w_t2);
+        bottom_diff0[5] *= sqrt(w_t3);
+        
         /*
         std::cout << "bottom_diff0: " << std::endl;
         for (int j=0; j<6; j++) {

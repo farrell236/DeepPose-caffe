@@ -96,8 +96,13 @@ void SE3GeodesicLossLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
         
         //std::cout << "top_diff[0]: " << std::endl << top_diff[0] << std::endl;
         
-        caffe_scal(3, w_alpha, bottom_diff0);
-        caffe_scal(3, w_beta, bottom_diff0+3);
+        bottom_diff0[0] *= sqrt(w_r1);
+        bottom_diff0[1] *= sqrt(w_r2);
+        bottom_diff0[2] *= sqrt(w_r3);
+        bottom_diff0[3] *= sqrt(w_t1);
+        bottom_diff0[4] *= sqrt(w_t2);
+        bottom_diff0[5] *= sqrt(w_t3);
+
         /*
         std::cout << "bottom_diff0: " << std::endl;
         for (int j=0; j<6; j++) {
