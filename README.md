@@ -1,3 +1,98 @@
+# DeepPose-caffe
+
+A general Riemannian formulation of the pose estimation problem to train CNNs directly on SO(3) and SE(3) equipped with a left-invariant Riemannian metric. 
+
+
+## Build and Installation
+
+This package requires building Caffe with Intel MKL.
+
+### Modified Files
+
+* cmake/Summary.cmake
+* cmake/Dependencies.cmake
+* cmake/Modules/FindMKL.cmake
+* include/caffe/layers/base_data_layer.hpp
+* src/caffe/layers/data_layer.cpp
+* src/caffe/layers/dropout_layer.cpp
+* src/caffe/layers/dropout_layer.cu
+* src/caffe/proto/caffe.proto
+
+
+### Added Files
+
+* include/caffe/layers/normalize_layer.hpp
+* include/caffe/layers/se3_geodesic_loss_layer.hpp 
+* include/caffe/layers/so3_quaternion_loss2.hpp 
+* include/caffe/layers/so3_quaternion_loss3.hpp 
+* include/caffe/layers/so3_quaternion_loss4.hpp 
+* src/caffe/layers/normalize_layer.cpp
+* src/caffe/layers/normalize_layer.cu
+* src/caffe/layers/se3_geodesic_loss_layer.cpp
+* src/caffe/layers/se3_geodesic_loss_layer.cu
+* src/caffe/layers/so3_quaternion_loss2.cpp
+* src/caffe/layers/so3_quaternion_loss2.cu
+* src/caffe/layers/so3_quaternion_loss3.cpp
+* src/caffe/layers/so3_quaternion_loss3.cu
+* src/caffe/layers/so3_quaternion_loss4.cpp
+* src/caffe/layers/so3_quaternion_loss4.cu
+* src/caffe/test/test_normalize_layer.cu
+* src/caffe/test/test_se3_geodesic_loss_layer.cpp
+* src/caffe/test/test_so3_quaternion_loss2.cpp
+* src/caffe/test/test_so3_quaternion_loss3.cpp
+* src/caffe/test/test_so3_quaternion_loss4.cpp
+
+
+## Added Layers
+
+These loss functions optimises on the manifold
+
+* SE3 Geodesic Loss (Rotation + Translation)
+* SO3 Quaternion Loss (Rotations only)
+* Instance Normalisation Layer
+
+## Usage
+
+See DeepPose/README.md
+
+## Authors & Citation
+
+* Benjamin Hou
+* Nina Miolane
+* Bishesh Khanal
+* Bernhard Kainz
+
+If you like our work and found it useful for your research, please cite our paper. Thanks! :)
+
+```
+@inproceedings{hou2018computing,
+  title={Computing CNN Loss and Gradients for Pose Estimation with Riemannian Geometry},
+  author={Hou, Benjamin and Miolane, Nina and Khanal, Bishesh and Lee, Matthew and Alansary, Amir and McDonagh, Steven and Hajnal, Jo V and Rueckert, Daniel and Glocker, Ben and Kainz, Bernhard},
+  booktitle={ International Conference on Medical Image Computing and Computer-Assisted Intervention},
+  year={2018},
+  organization={Springer}
+}
+```
+
+```
+@misc{miolane2018geomstats, 
+  title={Geomstats: Computations and Statistics on Manifolds with Geometric Structures.}, 
+  url={https://github.com/ninamiolane/geomstats}, 
+  journal={GitHub}, 
+  author={Miolane, Nina and Mathe, Johan and Pennec, Xavier}, 
+  year={2018}, 
+  month={Feb}
+}
+```
+
+## Acknowledgements
+
+* Miolane et al. [Geomstats](https://github.com/ninamiolane/geomstats)
+* Kendall et al. - [Kings College Dataset](http://mi.eng.cam.ac.uk/projects/relocalisation/#dataset)
+* Du Q. Hyunh et al. - [Metrics for 3D Rotations: Comparison and Analysis](https://link.springer.com/article/10.1007%2Fs10851-009-0161-2)
+
+---
+
 # Caffe
 
 [![Build Status](https://travis-ci.org/BVLC/caffe.svg?branch=master)](https://travis-ci.org/BVLC/caffe)
